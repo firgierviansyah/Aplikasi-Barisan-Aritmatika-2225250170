@@ -1,4 +1,4 @@
-import { GEMINI_API_KEY, GEMINI_MODELS } from './config.js'
+import { GEMINI_API_KEY, GEMINI_MODELS, THINKING_LEVEL } from './config.js'
 
 const BASE = 'https://generativelanguage.googleapis.com/v1beta/models/'
 
@@ -68,17 +68,24 @@ export async function askGemini({ system, history = [], question, onText, signal
       const body = {
         systemInstruction: { parts: [{ text: system }] },
         contents: toContents(history, question),
-        generationConfig: { temperature: 0.6, maxOutputTokens: 1200 }
+        generationConfig: { temperature: 0.6, maxOutputTokens: 2048 } // sudah termasuk token "berpikir"
       }
-      if (model.startsWith('gemini-2.5')) body.generationConfig.thinkingConfig = { thinkingBudget: 0 } // tanpa "berpikir" agar cepat
-      arm()
-      const res = await fetch(`${BASE}${model}:streamGenerateContent?alt=sse`, {
+      if (!GEMINI_API_KEY) throw new AiError('key') // VITE_GEMINI_API_KEY kosong (.env tidak terbaca / belum diisi di Vercel)
+      if (THINKING_LEVEL[model]) body.generationConfig.thinkingConfig = { thinkingLevel: THINKING_LEVEL[model] }
+      const send = () => fetch(`${BASE}${model}:streamGenerateContent?alt=sse`, {
         method: 'POST', signal: ctrl.signal, body: JSON.stringify(body),
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY }
       })
+      arm()
+      let res = await send()
+      if (res.status === 400 && body.generationConfig.thinkingConfig) { // pengaturan thinking ditolak: ulangi tanpa itu
+        delete body.generationConfig.thinkingConfig
+        res = await send()
+      }
       if (!res.ok) {
         let msg = ''
         try { msg = (await res.json())?.error?.message || '' } catch { /* abaikan */ }
+        console.warn(`[Gemini] ${model} -> HTTP ${res.status}: ${msg}`) // lihat di Console peramban (F12) untuk diagnosis
         const kind = res.status === 401 || res.status === 403 || /api key/i.test(msg) ? 'key' : res.status === 429 ? 'quota' : 'server'
         lastErr = new AiError(kind, res.status)
         if (kind === 'key') throw lastErr
