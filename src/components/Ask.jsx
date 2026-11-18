@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import M from './M'
 import Icon from './Icon'
+import { KakAvatar } from './Mascot'
 import { askGemini, friendly, tutorPrompt } from '../lib/ai'
 
 const CHIPS = ['Aku bingung, beri petunjuk pertama', 'Tolong jelaskan dengan contoh angka kecil']
@@ -31,12 +32,14 @@ export default function Ask({ materi }) {
   }
   return (
     <section className="panel ask">
-      <h3>Tanya asisten</h3>
-      <p className="muted">Ada bagian yang kurang jelas? Tulis pertanyaanmu. Asisten akan membimbingmu langkah demi langkah dengan petunjuk, supaya kamu bisa menemukan jawabannya sendiri.</p>
+      <div className="ka-intro">
+        <KakAvatar mood={busy ? 'berpikir' : 'senyum'} size={48} />
+        <div><h3>Tanya Kak Aritma</h3><p className="muted">{busy ? 'Kak Aritma sedang menyusun pertanyaan pemandu…' : 'Kak Aritma membimbingmu lewat tiga langkah: mengamati, menganalisis, lalu menyimpulkan sendiri.'}</p></div>
+      </div>
       {log.length === 0 && <div className="chips-row">{CHIPS.map((c) => <button key={c} type="button" className="chip" onClick={() => send(c)}>{c}</button>)}</div>}
       <div className="ask-log" ref={box}>
         {log.map((m, i) => m.pending && !m.content
-          ? <div key={m.id || i} className="bubble assistant typing" role="status" aria-label="Asisten sedang mengetik"><i /><i /><i /></div>
+          ? <div key={m.id || i} className="bubble assistant typing" role="status" aria-label="Kak Aritma sedang mengetik"><i /><i /><i /></div>
           : <div key={m.id || i} className={'bubble ' + m.role + (m.error ? ' error' : '') + (m.pending ? ' streaming' : '')}><M>{m.content}</M></div>)}
       </div>
       <form onSubmit={(e) => { e.preventDefault(); send(q) }} className="row">

@@ -68,6 +68,9 @@ export const clearScores = () => drop('scores')
 export const getProg = () => { const p = mine('progress', null); return Array.isArray(p) && p.length === 3 ? p : [false, false, false] }
 export const saveProg = (p) => put('progress', p)
 export const resetProg = () => drop('progress')
+// Zona Game terbuka setelah DUA materi awal selesai; Kuis Utama baru terbuka setelah ketiga materi selesai.
+export const gamesOpen = () => { const p = getProg(); return !!(p[0] && p[1]) }
+export const quizOpen = () => getProg().every(Boolean)
 
 // ----- Game: bintang per level (level terbuka diturunkan dari sini) + riwayat -----
 export const getGames = () => { const g = mine('games', {}); return g && typeof g === 'object' ? g : {} }

@@ -6,7 +6,8 @@ import FrogGame from './FrogGame'
 import VaultGame from './VaultGame'
 import { FrogArt, VaultArt, StarGold } from './GameArt'
 import { GameOver, LevelClear, Victory } from './Overlays'
-import { getProg, saveStars, starsOf, addPlay, getHistory } from '../../lib/storage'
+import Locked from '../Locked'
+import { gamesOpen, saveStars, starsOf, addPlay, getHistory } from '../../lib/storage'
 import { isMuted, setMuted, sfx } from '../../lib/sound'
 import { tryLandscape, releaseLandscape } from '../../lib/screen'
 
@@ -43,19 +44,13 @@ export default function GameZone({ user, go }) {
   const short = useMq('(max-height: 520px)')
   const coarse = useMq('(pointer: coarse)')
   const vland = view === 'play' && portrait && pref
-  const prog = getProg()
-  const unlocked = prog[0] && prog[1]
+  const unlocked = gamesOpen()
 
   useEffect(() => { if (!vland) return; const o = document.body.style.overflow; document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow = o } }, [vland])
   useEffect(() => () => releaseLandscape(), [])
   useEffect(() => { if (status === 'win') sfx.win(); else if (status === 'clear') sfx.good(); else if (status === 'over') sfx.bad() }, [status])
 
-  if (!unlocked) return (
-    <div className="panel center"><div className="modal-ic"><Icon n="lock" size={30} /></div>
-      <h2 style={{ justifyContent: 'center' }}>Zona Game masih terkunci</h2>
-      <p>Selesaikan dulu materi dan kuis pembuka untuk membuka Zona Game!</p>
-      <button className="btn" onClick={() => go('learn')}>Mulai belajar</button></div>
-  )
+  if (!unlocked) return <Locked title="Zona Game" need={2} go={go} />
 
   const start = (g, l) => {
     livesRef.current = MAXL; roundRef.current = 0; mist.current = 0

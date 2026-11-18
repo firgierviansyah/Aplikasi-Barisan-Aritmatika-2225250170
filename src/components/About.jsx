@@ -2,7 +2,7 @@ import Mascot from './Mascot'
 export default function About() {
   return (
     <div className="panel about">
-      <Mascot />
+      <Mascot mood="senyum" wave={false} />
       <p>Aplikasi ini membantu siswa SMP memahami barisan aritmatika: konsep beda dan rumus suku ke-n, lalu menerapkannya pada soal cerita.</p>
       <ul className="points">
         <li>Belajar bertahap: tahap berikutnya terbuka setelah Kuis Kejutan lulus.</li>

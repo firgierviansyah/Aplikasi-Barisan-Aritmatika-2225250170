@@ -18,6 +18,7 @@ export default function App() {
   const [page, setPage] = useState('home')
   const [notice, setNotice] = useState(null)
   const [chatLog, setChatLog] = useState([])
+  const [consult, setConsult] = useState(null) // permintaan konsultasi dari Analisis Nilai: membuka chat Kak Aritma
   useEffect(() => {
     const onPop = (e) => { setPage(e.state?.p || 'home'); window.scrollTo(0, 0) }
     window.addEventListener('popstate', onPop)
@@ -40,13 +41,13 @@ export default function App() {
           ? <strong className="brand"><span className="logo"><Icon n="chart" size={18} /></span>Barisan Aritmatika</strong>
           : <button className="link" onClick={home}><Icon n="back" size={18} /> Menu utama</button>}
         <span className="who"><span className="avatar">{user.nama[0].toUpperCase()}</span><span className="hide-s">{user.nama} · {user.kelas}</span>
-          <button className="link" aria-label="Keluar" onClick={() => { logout(); setUser(null); setNotice(null); setChatLog([]); setPage('home') }}><Icon n="out" size={18} /></button></span>
+          <button className="link" aria-label="Keluar" onClick={() => { logout(); setUser(null); setNotice(null); setChatLog([]); setConsult(null); setPage('home') }}><Icon n="out" size={18} /></button></span>
       </header>
       <main key={page}>
         {page === 'home' && notice && <div className="notice" role="status"><Icon n="info" size={20} /><span>{notice}</span><button className="link" aria-label="Tutup pemberitahuan" onClick={() => setNotice(null)}>Tutup</button></div>}
-        {page === 'home' ? <Dashboard user={user} go={go} /> : (<>{page !== 'game' && <h1>{titles[page]}</h1>}<Page user={user} go={go} /></>)}</main>
+        {page === 'home' ? <Dashboard user={user} go={go} /> : (<>{page !== 'game' && <h1>{titles[page]}</h1>}<Page user={user} go={go} onConsult={(c) => setConsult({ ...c, id: Date.now() })} /></>)}</main>
       {/* Asisten melayang disembunyikan (tidak dirender) di Kuis dan Zona Game agar tidak ada kecurangan */}
-      {page !== 'quiz' && page !== 'game' && <FloatingChat user={user} halaman={page === 'home' ? 'Menu utama' : titles[page]} log={chatLog} setLog={setChatLog} />}
+      {page !== 'quiz' && page !== 'game' && <FloatingChat user={user} halaman={page === 'home' ? 'Menu utama' : titles[page]} log={chatLog} setLog={setChatLog} consult={consult} />}
     </div>
   )
 }

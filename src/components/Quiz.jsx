@@ -1,28 +1,30 @@
 import { useState } from 'react'
 import { soalUtama } from '../data/content'
-import { addScore, getScores } from '../lib/storage'
+import { addScore, getScores, quizOpen } from '../lib/storage'
+import Locked from './Locked'
 import Mcq from './Mcq'
 import Mascot from './Mascot'
 import Icon from './Icon'
 
 const JUMLAH = 8
 // Alur: layar penyambut (intro) -> soal (play) -> hasil (done). Soal baru dibuat hanya saat tombol Mulai ditekan.
-export default function Quiz() {
+export default function Quiz({ go }) {
   const [phase, setPhase] = useState('intro')
   const [qs, setQs] = useState([])
   const [i, setI] = useState(0)
   const [skor, setSkor] = useState(0)
-  const start = () => { setQs(soalUtama()); setI(0); setSkor(0); setPhase('play') }
+  const start = () => { setQs(soalUtama()); setI(0); setSkor(0); setPhase('play'); window.scrollTo(0, 0) }
   const next = (benar) => {
     const s = skor + (benar ? 1 : 0); setSkor(s)
     if (i + 1 >= qs.length) { addScore({ skor: s, total: qs.length }); setPhase('done') } else setI(i + 1)
   }
 
+  if (!quizOpen()) return <Locked title="Kuis Interaktif" need={3} go={go} />
   if (phase === 'intro') {
     const last = getScores().slice(-1)[0]
     return (
       <div className="panel center quiz-intro">
-        <Mascot />
+        <Mascot mood="semangat" />
         <h2>Siap untuk kuis?</h2>
         <p className="muted">Tarik napas dulu, santai saja. Kamu pasti bisa!</p>
         <ul className="facts">
@@ -37,10 +39,17 @@ export default function Quiz() {
   }
   if (phase === 'done') return (
     <div className="panel center">
+      <Mascot mood={skor >= qs.length / 2 ? 'semangat' : 'berpikir'} />
       <h2>{skor === qs.length ? 'Sempurna!' : skor >= qs.length / 2 ? 'Bagus sekali!' : 'Terus berlatih ya!'}</h2>
       <p className="big">{skor} / {qs.length}</p>
       <p className="muted">Nilaimu {Math.round((skor / qs.length) * 100)}. Hasil tersimpan di Analisis Nilai.</p>
-      <button className="btn" onClick={() => setPhase('intro')}>Kembali ke awal kuis</button>
+      <nav className="quiz-nav" aria-label="Pilihan setelah kuis selesai">
+        <button className="btn" onClick={start}><Icon n="target" size={18} /> Lanjut ke Kuis Berikutnya</button>
+        <button className="btn" onClick={() => go('progress')}><Icon n="chart" size={18} /> Menuju Analisis Nilai</button>
+        <button className="btn ghost" onClick={() => go('game')}><Icon n="game" size={18} /> Lanjut ke Tantangan (Game)</button>
+        <button className="btn ghost" onClick={() => go('home')}><Icon n="back" size={18} /> Kembali ke Menu Utama</button>
+        <p className="muted nav-note">Soal kuis berikutnya memakai angka yang baru.</p>
+      </nav>
     </div>
   )
   return (

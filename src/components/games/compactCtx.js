@@ -1,3 +1,4 @@
 import { createContext } from 'react'
-// true saat area game dalam mode ringkas (HP / layar pendek). Dipakai papan batu agar ikut mengecil.
+
+// Penanda mode "compact" (layar kecil) untuk Stage dan Board.
 export const CompactCtx = createContext(false)

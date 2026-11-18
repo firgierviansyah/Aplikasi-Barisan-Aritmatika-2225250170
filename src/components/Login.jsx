@@ -19,7 +19,7 @@ export default function Login({ onLogin }) {
         <p>Pahami pola angka dengan cara yang seru dan mudah</p>
       </header>
       <div className="login">
-        <div className="login-art"><Mascot /><div className="chips"><span>2</span><span>5</span><span>8</span><span>11</span></div></div>
+        <div className="login-art"><Mascot mood="senyum" /><div className="chips"><span>2</span><span>5</span><span>8</span><span>11</span></div></div>
         <form className="login-card" onSubmit={(e) => { e.preventDefault(); ok && onLogin({ nama: f.nama.trim(), kelas: f.kelas.trim(), sekolah: f.sekolah.trim() }) }}>
           <h2>Selamat datang!</h2>
           <p className="muted">Isi data singkat ini untuk mulai belajar. Tanpa kata sandi.</p>

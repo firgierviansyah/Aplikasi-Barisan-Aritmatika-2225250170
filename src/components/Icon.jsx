@@ -5,6 +5,7 @@ const P = {
   chart: <><path d="M4 20V4M4 20h16" /><path d="M8 15l4-4 3 3 5-6" /></>,
   info: <><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5v.01" /></>,
   lock: <><rect x="5" y="11" width="14" height="10" rx="3" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></>,
+  unlock: <><rect x="5" y="11" width="14" height="10" rx="3" /><path d="M8 11V8a4 4 0 0 1 7.5-2" /></>,
   check: <path d="M5 12.5l4.5 4.5L19 7.5" />,
   back: <path d="M15 5l-7 7 7 7" />,
   next: <path d="M9 5l7 7-7 7" />,
