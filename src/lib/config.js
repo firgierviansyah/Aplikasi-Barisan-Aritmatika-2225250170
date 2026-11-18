@@ -6,4 +6,4 @@ export const GEMINI_API_KEY = String(import.meta.env.VITE_GEMINI_API_KEY || '').
 
 // Hanya model versi FLASH (ringan dan cepat), dicoba berurutan: jika model pertama tidak tersedia/penuh,
 // otomatis pindah ke berikutnya. (gemini-1.5-flash dan 2.0-flash sudah dihentikan Google, jadi tidak dipakai.)
-export const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-2.5-flash']
+export const GEMINI_MODELS = ['gemini-1.5-flash']
